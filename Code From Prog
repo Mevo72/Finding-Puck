@@ -1,0 +1,56 @@
+%Outline
+clear;clc;
+
+%These lines of code import the image and write down the images' dimensions.
+file=input('Enter filename: ','s');
+pix=imread(file);
+[h,w,p]=size(pix);
+binary=false(h,w);
+%This are the variables we will use in the program
+row=0;
+col=0;
+c=0;
+k=1;
+%This for loop counts the number of pixels that are in the of the target color range.
+for ii=1:1:h
+    for jj=1:1:w
+        r=pix(ii,jj,1);
+        g=pix(ii,jj,2);
+        b=pix(ii,jj,3);
+        if (r>=1&&r<=70)&&(g>=30&&g<=120)&&(b>=90&&b<=150)
+            binary(ii,jj)=1;
+            m(k)=ii;
+            n(k)=jj;
+            row=row+ii;
+            col=col+jj;
+            c=c+1;
+            k=k+1;
+        end
+    end
+end
+%This following equations create the variables needed to create a circle surrounding the target object in the image
+k=k-1;
+crow=round(row/c);
+ccol=round(col/c);
+dr=crow-m(1);
+dc=ccol-n(1);
+radius=round(sqrt((dr*dr)+(dc*dc)));
+%The following for loop creates a white ring around the target object in the image.
+for ii=1:1:h
+    for jj=1:1:w
+            i=crow-ii;
+            j=ccol-jj;
+            q=(i*i)+(j*j);
+            if ((q)<=(radius*radius)+10)&&((q)>=(radius*radius)-10)
+              pix(ii,jj,:)=255;  
+            elseif (q)==(radius*radius) 
+              pix(ii,jj,:)=255;
+            end
+    end
+end
+%Theselines of code save the file and express it display the final product
+file(end:-1:end-3)=[];
+filename=[file 'Outline.png'];
+imwrite(pix,filename);
+figure        
+imshow(pix);
